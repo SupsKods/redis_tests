@@ -1,0 +1,53 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+#^syntax detection
+ 
+VAGRANTFILE_API_VERSION = "2"
+ 
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+ 
+  #config.vm.box = "hashicorp/precise64"
+  config.vm.box = "ubuntu/trusty64"
+  
+    
+  config.vm.define "consulredis1" do |consulredis1|
+    config.vm.provision "shell" do |s|
+        s.path = "provision.sh"
+        s.args   = ["/vagrant/node1/config.json","/vagrant/node1/redis-cluster-1.init.conf","/vagrant/node1/redis-cluster-1.conf"]
+    end
+    consulredis1.vm.hostname = "consulredis1"
+    consulredis1.vm.network "private_network", ip: "172.20.20.10"
+  end
+   
+  config.vm.define "consulredis2" do |consulredis2|
+    config.vm.provision "shell" do |s|
+        s.path = "provision.sh"
+        s.args   = ["/vagrant/node2/config.json","/vagrant/node2/redis-cluster-2.init.conf","/vagrant/node2/redis-cluster-2.conf"]
+    end
+    consulredis2.vm.hostname = "consulredis2"
+    consulredis2.vm.network "private_network", ip: "172.20.20.20"
+  end
+   
+  config.vm.define "consulredis3" do |consulredis3|
+    config.vm.provision "shell" do |s|
+        s.path = "provision.sh"
+        s.args   = ["/vagrant/node3/config.json","/vagrant/node3/redis-cluster-3.init.conf","/vagrant/node3/redis-cluster-3.conf"]
+    end
+    consulredis3.vm.hostname = "consulredis3"
+    consulredis3.vm.network "private_network", ip: "172.20.20.30"
+	config.vm.provision :shell, :path => "create_redis_cluster.sh"
+	config.vm.provision :shell, :path => "test_cluster.sh"
+  end
+  # test the cluster after the installation is done
+  #config.vm.provision :shell, :path => "create_redis_cluster.sh"
+#  config.vm.provision :shell, :path => "test_cluster.sh"
+   
+  #config.vm.define "consulclient" do |client|
+    #config.vm.provision "shell" do |s|
+     #   s.path = "provisionclient.sh"
+      #  s.args   = ["/vagrant/consulclient/config.json"]
+    #end
+    #client.vm.hostname = "consulclient"
+    #client.vm.network "private_network", ip: "172.20.20.40"
+  #end
+end

@@ -1,0 +1,4 @@
+sed -i 's/1/0/g' test.t
+port 7001 '7001' '7000+i' 
+abc
+
